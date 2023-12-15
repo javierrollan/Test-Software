@@ -1,3 +1,4 @@
-.xlsx*
-.code*
-.html
+*.xlsx*
+*.code*
+*.html
+*.xlsx
