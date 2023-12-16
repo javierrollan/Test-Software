@@ -18,13 +18,15 @@ progress_file_exists = os.path.isfile('progress.xlsx')
 # Load the progress DataFrame or create an empty one
 progress_df = pd.read_excel('progress.xlsx') if progress_file_exists else pd.DataFrame()
 
+# Declare total_questions as a global variable
+total_questions = 125
+
 def practice_tests():
-    global progress_df  # Declare progress_df as a global variable
+    global progress_df, total_questions  # Declare progress_df and total_questions as global variables
     # Welcome message for practice tests
     print("Welcome to the Practice Tests!")
 
     # Ensure unique questions based on the "Question Weight" column
-    total_questions = 125
     unique_questions = df.sample(n=total_questions, weights='Question Weight', replace=False)
 
     # Initialize variables to track results
@@ -33,23 +35,23 @@ def practice_tests():
 
     # Loop through selected questions
     for i, (_, question) in enumerate(unique_questions.iterrows(), start=1):
-        # Display the question number and text
-        print(f"\nQuestion {i} - Domain: {question['Question Domain']} - (Weight: {question['Question Weight']}):\n{question['Question']}")
+        # Display the question number, text, and explanation
+        print(f"\nQuestion {i} (Weight: {question['Question Weight']}):\n{question['Question']}")
+        print(f"Explanation: {question.get('Explanation', '')}")
 
         # If it's a multiple-choice question
         if isinstance(question['Answer'], str) and ',' in question['Answer']:
-            user_answer = input("\nEnter the letters of your choices (e.g., A, C): ")
+            user_answer = input("Enter the letters of your choices (e.g., A, C): ")
 
             # Convert the user's answer to uppercase
             user_answer = user_answer.upper()
 
             # Check if the user's answer is correct
             if user_answer == question['Answer'].upper():
-                print("\nCorrect!")
+                print("Correct!")
                 correct_answers += 1
             else:
-                print(f"\nWrong! The correct answer is {question['Answer']}.")
-                print(f"\nExplanation: {question.get('Explanation', '')}")
+                print(f"Wrong! The correct answer is {question['Answer']}.")
 
         else:
             # If it's a unique solution question
@@ -61,11 +63,10 @@ def practice_tests():
 
             # Check if the user's answer is correct
             if user_answer_lower == correct_answer_lower:
-                print("\nCorrect!")
+                print("Correct!")
                 correct_answers += 1
             else:
-                print(f"\nWrong! The correct answer is {question['Answer']}.")
-                print(f"\nExplanation: {question.get('Explanation', '')}")
+                print(f"Wrong! The correct answer is {question['Answer']}.")
 
         # Store results for each question
         results.append({
@@ -112,10 +113,12 @@ def practice_tests():
     progress_df = pd.concat([progress_df, pd.DataFrame([progress_data])], ignore_index=True)
 
     # Save the updated progress DataFrame to the progress.xlsx file
-    progress_df.to_excel('progress.xlsx', index=False, header=not progress_file_exists)
+    progress_df.to_excel('progress.xlsx', index=False, header=True)
+
+    print("Progress saved and file closed.")
 
 def print_results():
-    global progress_df  # Declare progress_df as a global variable
+    global progress_df, total_questions  # Declare global variables
     # Load the progress DataFrame from progress.xlsx
     try:
         progress_df = pd.read_excel('progress.xlsx')
@@ -127,7 +130,31 @@ def print_results():
     # Print the results in a formatted table using PrettyTable
     if not progress_df.empty:
         print("\nProgress of your Attempts:\n")
-        print(progress_df.to_markdown(index=False))
+
+        # Create a PrettyTable with column names
+        table = PrettyTable()
+        table.field_names = progress_df.columns.tolist()
+
+        # Iterate over rows and add data to the table
+        for _, row in progress_df.iterrows():
+            row_data = row.tolist()
+
+            # Format 'Correct Questions' column
+            correct_questions = row_data[2]
+            if isinstance(correct_questions, str):
+                correct_questions = correct_questions.split('/')
+                row_data[2] = f"{correct_questions[0]}/{total_questions}" if correct_questions else ''
+            else:
+                row_data[2] = ''
+
+            # Format domain columns
+            for i in range(4, len(row_data)):
+                domain_count = row_data[i].split('/')
+                row_data[i] = f"{domain_count[0]}/{total_questions}" if domain_count else ''
+
+            table.add_row(row_data)
+
+        print(table)
     else:
         print("No results available.")
 
