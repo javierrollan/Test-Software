@@ -2,7 +2,7 @@ import pandas as pd
 
 # Load the existing practice_test.xlsx file into a DataFrame
 try:
-    existing_df = pd.read_excel('practice_test.xlsx')
+    existing_df = pd.read_excel('practice_test2.xlsx')
 except FileNotFoundError:
     # If the file does not exist, create an empty DataFrame
     existing_df = pd.DataFrame()
@@ -28,4 +28,4 @@ new_questions_df = pd.DataFrame(questions_list)
 existing_df['Question'] = new_questions_df['Question']
 
 # Save the updated DataFrame to the practice_test.xlsx file
-existing_df.to_excel('practice_test.xlsx', index=False)
+existing_df.to_excel('practice_test2.xlsx', index=False)

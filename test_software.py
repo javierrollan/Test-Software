@@ -35,9 +35,8 @@ def practice_tests():
 
     # Loop through selected questions
     for i, (_, question) in enumerate(unique_questions.iterrows(), start=1):
-        # Display the question number, text, and explanation
+        # Display the question number and text
         print(f"\nQuestion {i} (Weight: {question['Question Weight']}):\n{question['Question']}")
-        print(f"Explanation: {question.get('Explanation', '')}")
 
         # If it's a multiple-choice question
         if isinstance(question['Answer'], str) and ',' in question['Answer']:
@@ -76,6 +75,9 @@ def practice_tests():
             'Explanation': question.get('Explanation', ''),
             'Domain': question.get('Question Domain', '')  # Updated to 'Question Domain'
         })
+
+        # Display the explanation only if the user answered the question
+        print(f"Explanation: {question.get('Explanation', '')}")
 
     # Display the final results
     print("\nFinal Results:")
