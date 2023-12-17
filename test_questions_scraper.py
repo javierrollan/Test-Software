@@ -53,12 +53,12 @@ for questions_container in all_questions_containers:
         # Store question information in a dictionary
         question_info = {
             'Question ID': question_id_start,
-            'Question Weight': None,
-            'Question Domain': None,
+            'Question Weight': 0.0,
+            'Question Domain': 'None',
             'Question Origin': 'CEHv12 Certlibrary',
             'Question': question_text_with_choices,
             'Answer': correct_answer,
-            'Explanation': None
+            'Explanation': 'None'
         }
 
         # Append the dictionary to the list
@@ -66,6 +66,10 @@ for questions_container in all_questions_containers:
 
         # Increment the Question ID for the next question
         question_id_start += 1
+
+        # Print the Question for this iteration
+        print(f"Question {question_id_start - 1}:\n{question_info['Question']}")
+        print(f"Answer: {question_info['Answer']}\n")
 
 # Append new data to the existing DataFrame
 existing_data = pd.concat([existing_data, pd.DataFrame(questions_list)], ignore_index=True)
